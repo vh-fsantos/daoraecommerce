@@ -14,19 +14,16 @@
                 </h2>
                 <hr />
                 <br />
-
-                <%- if (success) {%>
+                <% if (success) { %>
                     <div class="alert alert-success">
                         <%= success %>
                     </div>
                     <% }%>
-
-                        <%- if (error) {%>
+                        <% if (error) { %>
                             <div class="alert alert-danger">
                                 <%= error %>
                             </div>
-                            <%- } %>
-
+                            <% }%>
                                 <p>Digite seu email para receber as instruções de como redefinir a sua senha.</p>
                                 <form action="/v1/api/usuarios/recuperar-senha" method="POST">
                                     <div class="form-group">

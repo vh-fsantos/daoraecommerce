@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Usuario = mongoose.model("Usuario");
-// const enviarEmailRecovery = require("../helpers/email-recovery");
+const enviarEmailRecovery = require("../helpers/email-recovery");
 
 class UsuarioController {
 
@@ -14,7 +14,7 @@ class UsuarioController {
 
     // GET /:id
     show(req, res, next) {
-        Usuario.findById(req.params.id).then(usuario => {
+        Usuario.findById(req.params.id).populate({ path: "loja" }).then(usuario => {
             if (!usuario) return res.status(401).json({ errors: "Usuário não registrado" });
             return res.json({
                 usuario: {
@@ -71,7 +71,7 @@ class UsuarioController {
         if (!password) return res.status(422).json({ errors: { password: "Não pode ficar vazio." } });
         Usuario.findOne({ email }).then((usuario) => {
             if (!usuario) return res.status(401).json({ errors: "Usuário não registrado" });
-            if (!usuario.vaidarSenha(password)) return res.status(401).json({ errors: "Senha inválida" });
+            if (!usuario.validarSenha(password)) return res.status(401).json({ errors: "Senha inválida" });
             return res.json({ usuario: usuario.enviarAuthJSON() });
         }).catch(next);
     }
@@ -89,10 +89,12 @@ class UsuarioController {
         if (!email) return res.render('recovery', { error: "Preencha com o seu email", success: null });
 
         Usuario.findOne({ email }).then((usuario) => {
-            if (!usuario) return res.render("recovery", { error: "Não existe usuário com este email." });
+            if (!usuario) return res.render("recovery", { error: "Não existe usuário com este email.", success: null });
             const recoveryData = usuario.criarTokenRecuperacaoSenha();
             return usuario.save().then(() => {
-                return res.render('recovery', { error: null, success: true });
+                enviarEmailRecovery({ usuario, recovery: recoveryData }, (error = null, success = null) => {
+                    return res.render("recovery", { error, success });
+                });
             }).catch(next);
         }).catch(next);
     }
@@ -111,7 +113,7 @@ class UsuarioController {
     completeRecovery(req, res, next) {
         const { token, password } = req.body;
         if (!token || !password) return res.render("recovery/store", { error: "Preencha novamente com sua nova senha.", success: null, token: token });
-        Usuario.findOne({ "recovery.tokem": token }).then(usuario => {
+        Usuario.findOne({ "recovery.token": token }).then(usuario => {
             if (!usuario) return res.render("recovery/store", { error: "Usuário não identificado.", success: null });
 
             usuario.finalizarTokenRecuperacaoSenha();

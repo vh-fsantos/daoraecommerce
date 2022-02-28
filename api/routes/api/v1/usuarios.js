@@ -4,17 +4,17 @@ const UserController = require("../../../controllers/UsuarioController");
 
 const usuarioController = new UserController();
 
-router.post("/login", usuarioController.login);
-router.post("/registrar", usuarioController.store);
-router.put("/", auth.required, usuarioController.update);
-router.delete("/", auth.required, usuarioController.remove);
+router.post("/login", usuarioController.login); // tested
+router.post("/registrar", usuarioController.store); // tested
+router.put("/", auth.required, usuarioController.update); // tested
+router.delete("/", auth.required, usuarioController.remove); // tested
 
-router.get("/recuperar-senha", usuarioController.showRecovery);
-router.post("/recuperar-senha", usuarioController.createRecovery);
-router.get("/senha-recuperada", usuarioController.showCompleteRecovery);
-router.post("/senha-recuperada", usuarioController.completeRecovery);
+router.get("/recuperar-senha", usuarioController.showRecovery); // tested
+router.post("/recuperar-senha", usuarioController.createRecovery); // tested
+router.get("/senha-recuperada", usuarioController.showCompleteRecovery); // tested
+router.post("/senha-recuperada", usuarioController.completeRecovery); // tested
 
-router.get("/", auth.required, usuarioController.index);
-router.get("/:id", auth.required, usuarioController.show);
+router.get("/", auth.required, usuarioController.index); // tested
+router.get("/:id", auth.required, usuarioController.show); // tested
 
 module.exports = router;

@@ -3,8 +3,7 @@ const secret = require("../config").secret;
 
 function getTokenFromHeader(req) {
     if (!req.headers.authorization) return null;
-    const token = req.headers.authorization.split(" ")[1];
-
+    const token = req.headers.authorization.split(' ');
     if (token[0] !== "Ecommerce") return null;
     return token[1];
 }
@@ -12,13 +11,13 @@ function getTokenFromHeader(req) {
 const auth = {
     required: jwt({
         secret,
-        userProperty: 'payLoad',
+        userProperty: 'payload',
         algorithms: ["HS256"],
         getToken: getTokenFromHeader
     }),
     optional: jwt({
         secret,
-        userProperty: 'payLoad',
+        userProperty: 'payload',
         credentialsRequired: false,
         algorithms: ["HS256"],
         getToken: getTokenFromHeader
